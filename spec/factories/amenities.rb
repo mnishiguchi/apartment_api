@@ -1,0 +1,31 @@
+# == Schema Information
+#
+# Table name: amenities
+#
+#  id         :integer          not null, primary key
+#  identifier :string           not null
+#  title      :string           not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
+FactoryBot.define do
+  amenities = ["air-conditioning",
+               "washer-dryer",
+               "dishwasher",
+               "parking",
+               "fitness-center",
+               "wheelchair-accessible",
+               "pool",
+               "furnished",
+               "elevator",
+               "washer-dryer-hookup",
+               "laundry-facilities"]
+
+  factory :amenity do
+    sequence :identifier do |n|
+      amenities[n]
+    end
+    title { identifier }
+  end
+end
