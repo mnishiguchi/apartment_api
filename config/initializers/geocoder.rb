@@ -13,7 +13,7 @@ Geocoder.configure(
   api_key: ENV["GOOGLE_API_KEY"], # API key for geocoding service
 
   # IP address geocoding service
-  ip_lookup: :freegeoip,      # name of IP address geocoding service (symbol)
+  ip_lookup: :freegeoip, # name of IP address geocoding service (symbol)
 
   # Caching
   cache: nil,                 # cache object (must respond to #[], #[]=, and #del)
