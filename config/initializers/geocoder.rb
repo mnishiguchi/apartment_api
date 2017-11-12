@@ -9,8 +9,8 @@ Geocoder.configure(
 
   # Geocoding service
   timeout: 3,                 # geocoding service timeout (secs)
-  lookup: :google,            # name of geocoding service (symbol)
-  api_key: ENV["GOOGLE_API_KEY"], # API key for geocoding service
+  lookup: :mapzen,            # name of geocoding service (symbol)
+  api_key: ENV["MAPZEN_API_KEY"], # API key for geocoding service
 
   # IP address geocoding service
   ip_lookup: :freegeoip, # name of IP address geocoding service (symbol)
