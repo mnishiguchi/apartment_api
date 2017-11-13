@@ -16,7 +16,7 @@ Geocoder.configure(
   ip_lookup: :freegeoip, # name of IP address geocoding service (symbol)
 
   # Caching
-  cache: nil,                 # cache object (must respond to #[], #[]=, and #del)
+  cache: nil,                 # cache object (must respond to #[], #[]=, and #del) e.g. Redis.new
   cache_prefix: "geocoder:",  # prefix (string) to use for all cache keys
 
   # Exceptions that should not be rescued by default

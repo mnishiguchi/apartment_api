@@ -23,8 +23,7 @@ gem "puma", "~> 3.7"
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem "rack-cors"
-gem "httparty"
-gem "geocoder"
+gem "geocoder", git: "git@github.com:mnishiguchi/geocoder.git", branch: "mnishiguchi/mapzen"
 gem "ruby-progressbar"
 gem "faker"
 
@@ -36,7 +35,7 @@ group :development, :test do
   gem "pry-rails"
   gem "pry"
   gem "rspec-rails"
-  gem "shoulda-matchers", git: "https://github.com/thoughtbot/shoulda-matchers.git", branch: "rails-5"
+  gem "shoulda-matchers"
   gem "vcr"
   gem "webmock"
 end
