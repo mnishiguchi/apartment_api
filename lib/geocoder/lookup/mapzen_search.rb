@@ -9,17 +9,22 @@ require "geocoder/lookups/pelias"
 #   # https://github.com/alexreisner/geocoder/blob/master/lib/geocoder/lookups/base.rb#L45
 #   r = Geocoder::Lookup::Mapzen.new
 #
-#   # For geocoding, takes a search string and retutn an array of Geocoder::Result object
+#   # For geocoding, takes a search string and retutn a Geocoder::Result object
 #   r.search("Adams Morgan", params: {})
 #
-#   # For reverse geocoding, coordinates (latitude, longitude) and retutn an array of Geocoder::Result object
+#   # For reverse geocoding, coordinates (latitude, longitude) and retutn a Geocoder::Result object
 #   r.search([38.9143795889, -77.0364987456], params: {})
+#
+#   # For autocomplete, takes a search string and retutn an array of strings.
+#   r = Geocoder::Lookup::MapzenAutocomplete.new
+#   r.search("Adams Morgan", params: {})
 #
 module Geocoder
   module Lookup
     class MapzenSearch < Pelias
       # params hash must have symbol keys.
       DEFAULT_PARAMS = {
+        # Washington metropolitan area bounding box.
         "boundary.rect.min_lon": -77.9830169678,
         "boundary.rect.max_lon": -76.2341308594,
         "boundary.rect.min_lat": 38.2646020963,
@@ -38,13 +43,33 @@ module Geocoder
       end
 
       def query_url(query)
-        query_type = query.reverse_geocode? ? "reverse" : "search"
+        query_type = if autocomplete?(query)
+                       "autocomplete"
+                     elsif query.reverse_geocode?
+                       "reverse"
+                     else
+                       "search"
+                     end
         "#{protocol}://#{endpoint}/v1/#{query_type}?" + url_query_string(query)
       end
 
+      def autocomplete?(query)
+        query.options[:autocomplete]
+      end
+
       # https://github.com/alexreisner/geocoder/blob/master/lib/geocoder/lookups/base.rb#L45
-      def search(query, options = {})
-        super(query, options)
+      def search(text_or_coordinates, options = {})
+        unless text_or_coordinates.is_a?(Geocoder::Query)
+          query = Geocoder::Query.new(text_or_coordinates, options)
+        end
+
+        if autocomplete?(query)
+          # An array of autocomplete suggestion strings.
+          results(query)
+        else
+          # A Geocoder::Result::MapzenSearch object.
+          super(query).first
+        end
       end
 
       private
@@ -61,21 +86,26 @@ module Geocoder
           params[:'point.lat'] = query.coordinates[0]
           params[:'point.lon'] = query.coordinates[1]
         else
-          # For search api
+          # For search api and autocomplete api
           params[:text] = query.text
         end
 
         params
       end
 
-      # Fetch data for the specified Geocoder::Query instance and return results as an array of hashes.
-      # When Geocoder::Lookup::MapzenSearch#search is called, that array will be converted into
-      # an array of Geocoder::Result::MapzenSearch objects.
+      # Fetch data for the specified Geocoder::Query instance and return results as an array.
       # https://github.com/alexreisner/geocoder/blob/master/lib/geocoder/lookups/pelias.rb#L41
-      # def results(query)
-      #   # An array of 'features' hashes or []
-      #   super(query)
-      # end
+      def results(query)
+        if autocomplete?(query)
+          # An array of 'label' strings or []
+          features = super(query)
+          labels = features.map { |feature| feature.dig("properties", "label") }
+          labels.map { |label| label.rpartition(", USA")[0] }
+        else
+          # An array of 'features' hashes or []
+          super(query)
+        end
+      end
     end
   end
 end
