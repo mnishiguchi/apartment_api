@@ -32,6 +32,16 @@ module ApartmentApi
 
     config.eager_load_paths << Rails.root.join("lib")
 
+    # Use Redis as the main Rails.cache store where REDIS_URL is defined.
+    # https://github.com/redis-store/redis-rails
+    config.cache_store = :redis_store if ENV["REDIS_URL"]
+
+    # Use Rack::Attack for rate limiting, client whitelisting, etc.
+    config.middleware.use Rack::Attack
+
+    # Add Rack::Attack::RateLimit to include X-RateLimit headers in all responses.
+    config.middleware.use Rack::Attack::RateLimit, throttle: ["req/ip"]
+
     # http://guides.rubyonrails.org/generators.html
     config.generators do |g|
       g.stylesheets     false

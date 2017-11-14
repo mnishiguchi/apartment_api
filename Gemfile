@@ -23,7 +23,12 @@ gem "puma", "~> 3.7"
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem "rack-cors"
-gem "geocoder", git: "git@github.com:mnishiguchi/geocoder.git", branch: "mnishiguchi/mapzen"
+gem "rack-attack"
+gem "rack-attack-rate-limit", require: "rack/attack/rate-limit"
+gem "redis-rails"
+# gem "active_model_serializers"
+# gem "kaminari"
+gem "geocoder", github: "mnishiguchi/geocoder", branch: "mnishiguchi/mapzen"
 gem "ruby-progressbar"
 gem "faker"
 

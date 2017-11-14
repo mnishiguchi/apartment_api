@@ -13,11 +13,11 @@ Geocoder.configure(
   api_key: ENV["MAPZEN_API_KEY"], # API key for geocoding service
 
   # IP address geocoding service
-  ip_lookup: :freegeoip, # name of IP address geocoding service (symbol)
+  ip_lookup: :freegeoip,      # name of IP address geocoding service (symbol)
 
   # Caching
-  cache: nil,                 # cache object (must respond to #[], #[]=, and #del) e.g. Redis.new
-  cache_prefix: "geocoder:",  # prefix (string) to use for all cache keys
+  cache: ENV["REDIS_URL"] && Redis.new,  # cache object (must respond to #[], #[]=, and #del)
+  cache_prefix: "geocoder:",             # prefix (string) to use for all cache keys
 
   # Exceptions that should not be rescued by default
   # (if you want to implement custom error handling);
